@@ -1,0 +1,5 @@
+name: 指令拦截
+display_name: 指令拦截
+desc: 拦截指令消息，防止 LLM 被误唤醒。支持自动检测所有已注册指令，并提供指令列表查看和验证功能。
+version: v1.0.8
+author: 懒大猫

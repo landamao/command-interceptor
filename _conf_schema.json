@@ -1,0 +1,26 @@
+{
+  "名字": {
+    "description": "机器人名称",
+    "hint": "合并转发消息中机器人显示的名称",
+    "type": "string",
+    "default": "松坂砂糖"
+  },
+  "额外指令": {
+    "description": "额外拦截指令",
+    "hint": "除插件自动检测外，额外需要拦截的指令列表",
+    "type": "list",
+    "default": []
+  },
+  "禁用指令唤醒": {
+    "description": "禁用指令唤醒",
+    "hint": "拦截已注册的指令消息，阻止其唤醒 LLM（推荐开启）",
+    "type": "bool",
+    "default": true
+  },
+  "禁用前缀唤醒": {
+    "description": "禁用前缀唤醒",
+    "hint": "拦截以唤醒前缀开头的消息，阻止其唤醒 LLM",
+    "type": "bool",
+    "default": true
+  }
+}
