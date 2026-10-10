@@ -1,7 +1,7 @@
 import sys
 from pypinyin import lazy_pinyin
 from astrbot.api.all import (
-    Star, Context, Plain, Reply, Node, Nodes,
+    Star, Context, Plain, Reply, Node, Nodes, At,
     AstrBotConfig, AstrMessageEvent, logger
 )
 from astrbot.api.event import filter
@@ -28,14 +28,26 @@ class 指令拦截(Star):
         self.所有指令 = self.获取所有指令(self.config['额外指令'])
         self.所有指令集合 = set(self.所有指令)
 
-    @filter.on_llm_request(priority=sys.maxsize)
-    async def llm请求前(self, event: AstrMessageEvent, _):
+    @filter.on_waiting_llm_request(priority=sys.maxsize)
+    async def llm队列时(self, event: AstrMessageEvent):
         """在llm请求前拦截指令消息"""
+        mid = event.get_self_id()
+
+        for i in event.get_messages():
+            if isinstance(i, Plain):
+                ctx = i.text
+                break
+            elif isinstance(i, At) and str(i.qq) != mid:
+                ctx = f" @{i.name}({i.qq}) "
+                break
+        else:
+            ctx = ''
+
         if self.禁用指令唤醒 and (l:=event.get_message_str().strip().split()) and l[0] in self.所有指令集合:
             event.stop_event()
             logger.info(f"[指令拦截] （指令拦截）拦截了消息 |{event.get_message_outline()} | 唤醒llm")
             return
-        if self.禁用前缀唤醒 and next((seg.text for seg in event.get_messages() if isinstance(seg, Plain)), '').strip().startswith(self.唤醒前缀):
+        if self.禁用前缀唤醒 and ctx.startswith(self.唤醒前缀):
             event.stop_event()
             logger.info(f"[指令拦截] （前缀拦截）拦截了消息 |{event.get_message_outline()} | 唤醒llm")
             return
