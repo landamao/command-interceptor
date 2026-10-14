@@ -1,5 +1,4 @@
 import sys
-from pypinyin import lazy_pinyin
 from astrbot.api.all import (
     Star, Context, Plain, Reply, Node, Nodes, At,
     AstrBotConfig, AstrMessageEvent, logger
@@ -123,7 +122,9 @@ class 指令拦截(Star):
                 中文指令.append(指令)
             else:
                 英文指令.append(指令)
-        中文指令.sort(key=lambda x: lazy_pinyin(x))
+        # 中文按码点排序（原先依赖 pypinyin 的拼音序，该库导入即占约 50 MB，
+        # 仅为一次排序不值当，故移除；列表顺序本身不影响指令匹配）
+        中文指令.sort()
         英文指令.sort(key=lambda x: x.lower())
         所有指令 = 中文指令 + 英文指令
         return 所有指令
